@@ -22,6 +22,7 @@ target_include_directories(tondb-scanner
     PUBLIC external/libpqxx
     PUBLIC external/msgpack-c
     PUBLIC src/
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/ton/crypto/src
 )
 
 target_link_directories(tondb-scanner
@@ -42,7 +43,7 @@ set(TLB_TOKENS
 add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src
     COMMAND tlbc -o tokens -n tokens::gen -z tlb/tokens.tlb
-    COMMENT "Generate tokes tlb source files"
+    COMMENT "Generate tokens tlb source files"
     OUTPUT ${TLB_TOKENS}
     DEPENDS tlbc src/tlb/tokens.tlb
 )

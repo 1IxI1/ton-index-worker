@@ -6,7 +6,7 @@
 #include "Tokens.h"
 #include "parse_token_data.h"
 #include "smc-interfaces/execute-smc.h"
-#include "tokens.h"
+#include "Tokens.h"
 #include "common/checksum.h"
 
 
@@ -428,7 +428,7 @@ td::Result<NftItemDetectorR::Result::DNSEntry> NftItemDetectorR::get_dns_entry_d
   // TODO: support ProtoList
   auto site_cell = records.lookup_ref(td::sha256_bits256("site"));
   if (site_cell.not_null()) {
-    tokens::gen::DNSRecord::Record_dns_adnl_address site_record;
+    block::gen::DNSRecord::Record_dns_adnl_address site_record;
     if (!tlb::unpack_cell(site_cell, site_record)) {
       LOG(ERROR) << "Failed to unpack DNSRecord site for " << address_;
     } else {
@@ -439,7 +439,7 @@ td::Result<NftItemDetectorR::Result::DNSEntry> NftItemDetectorR::get_dns_entry_d
   // TODO: support SmcCapList
   auto wallet_cell = records.lookup_ref(td::sha256_bits256("wallet"));
   if (wallet_cell.not_null()) {
-    tokens::gen::DNSRecord::Record_dns_smc_address wallet_record;
+    block::gen::DNSRecord::Record_dns_smc_address wallet_record;
     if (!tlb::unpack_cell(wallet_cell, wallet_record)) {
       LOG(ERROR) << "Failed to unpack DNSRecord wallet";
     } else {
@@ -454,7 +454,7 @@ td::Result<NftItemDetectorR::Result::DNSEntry> NftItemDetectorR::get_dns_entry_d
 
   auto next_resolver_cell = records.lookup_ref(td::sha256_bits256("dns_next_resolver"));
   if (next_resolver_cell.not_null()) {
-    tokens::gen::DNSRecord::Record_dns_next_resolver next_resolver_record;
+    block::gen::DNSRecord::Record_dns_next_resolver next_resolver_record;
     if (!tlb::unpack_cell(next_resolver_cell, next_resolver_record)) {
       LOG(ERROR) << "Failed to unpack DNSRecord next_resolver";
     } else {
@@ -469,7 +469,7 @@ td::Result<NftItemDetectorR::Result::DNSEntry> NftItemDetectorR::get_dns_entry_d
 
   auto storage_bag_id_cell = records.lookup_ref(td::sha256_bits256("storage"));
   if (storage_bag_id_cell.not_null()) {
-    tokens::gen::DNSRecord::Record_dns_storage_address dns_storage_record;
+    block::gen::DNSRecord::Record_dns_storage_address dns_storage_record;
     if (!tlb::unpack_cell(storage_bag_id_cell, dns_storage_record)) {
       LOG(ERROR) << "Failed to unpack DNSRecord storage";
     } else {
