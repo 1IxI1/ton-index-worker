@@ -1,5 +1,4 @@
 #pragma once
-#include <queue>
 #include <pqxx/pqxx>
 #include "InsertManagerBase.h"
 

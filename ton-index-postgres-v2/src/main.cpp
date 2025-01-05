@@ -1,6 +1,5 @@
 #include "td/utils/port/signals.h"
 #include "td/utils/OptionParser.h"
-#include "td/utils/format.h"
 #include "td/utils/logging.h"
 #include "td/utils/check.h"
 #include "td/utils/port/path.h"
@@ -10,8 +9,6 @@
 #include "InsertManagerPostgres.h"
 #include "DataParser.h"
 #include "DbScanner.h"
-#include "TraceAssembler.h"
-#include "EventProcessor.h"
 #include "IndexScheduler.h"
 
 
