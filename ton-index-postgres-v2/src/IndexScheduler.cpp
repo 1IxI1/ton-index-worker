@@ -1,7 +1,6 @@
 #include "IndexScheduler.h"
 #include "td/utils/Time.h"
 #include "td/utils/StringBuilder.h"
-#include <iostream>
 #include "BlockInterfacesDetector.h"
 
 
