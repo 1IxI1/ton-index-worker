@@ -92,9 +92,11 @@ void EventProcessor::process_states(const std::vector<schema::AccountState>& acc
 
     // load contract methods from disasm
     auto contract_methods = parse_contract_methods(code_cell);
+    for (const auto& method_id : contract_methods) {
+      LOG(DEBUG) << "Got method " << method_id << " for " << convert::to_raw_address(address);
+    }
     // TODO run further detectors only if they're in this list
     // TODO write the methods to db
-
     auto P1 = td::PromiseCreator::lambda([this, code_cell, address, found_interfaces, promise = ig.get_promise()](td::Result<JettonMasterData> master_data) mutable {
       if (master_data.is_ok()) {
         LOG(DEBUG) << "Detected interface JETTON_MASTER for " << convert::to_raw_address(address);
