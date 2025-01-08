@@ -10,6 +10,8 @@
 #include "td/actor/MultiPromise.h"
 #include "convert-utils.h"
 #include "tokens.h"
+#include "parse_contract_methods.h"
+
 
 
 // process ParsedBlock and try detect master and wallet interfaces
@@ -87,6 +89,12 @@ void EventProcessor::process_states(const std::vector<schema::AccountState>& acc
     }
     auto last_tx_lt = account_state.last_trans_lt;
     auto last_tx_now = account_state.timestamp;
+
+    // load contract methods from disasm
+    auto contract_methods = parse_contract_methods(code_cell);
+    // TODO run further detectors only if they're in this list
+    // TODO write the methods to db
+
     auto P1 = td::PromiseCreator::lambda([this, code_cell, address, found_interfaces, promise = ig.get_promise()](td::Result<JettonMasterData> master_data) mutable {
       if (master_data.is_ok()) {
         LOG(DEBUG) << "Detected interface JETTON_MASTER for " << convert::to_raw_address(address);
