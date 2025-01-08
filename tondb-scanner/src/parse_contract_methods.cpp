@@ -37,10 +37,13 @@ const methods = dict.keys();
 console.log("contract methods: ", methods);
 */
 
-td::Result<std::vector<td::RefInt256>> parse_contract_methods(td::Ref<vm::Cell> code_cell) {
+td::Result<std::vector<long long>> parse_contract_methods(td::Ref<vm::Cell> code_cell) {
+  // check if first op is SETCP0
+  // check if second op is DICTPUSHCONST
+  // and load method ids from this dict of methods
   try {
     vm::CellSlice cs = vm::load_cell_slice(code_cell);
-    auto first_op = cs.fetch_long(8);  // Fetch first 8 bits
+    auto first_op = cs.fetch_long(8);
     auto expectedCodePage = cs.fetch_long(8);
     if (first_op != 0xFF || expectedCodePage != 0) {
       return td::Status::Error("Failed to parse 1. SETCP or codepage is not 0");
@@ -53,12 +56,13 @@ td::Result<std::vector<td::RefInt256>> parse_contract_methods(td::Ref<vm::Cell> 
     auto methods_dict_key_len = cs.fetch_long(10);
     auto methods_dict_cell = cs.fetch_ref();
     vm::Dictionary methods_dict{methods_dict_cell, static_cast<int>(methods_dict_key_len)};
-
-    std::vector<td::RefInt256> method_ids;
-    methods_dict.init_iterator();
-
-    // TODO: collect and return the dict keys
-
+    std::vector<long long> method_ids;
+    auto iterator = methods_dict.begin();
+    while (!iterator.eof()) {
+      auto key = td::BitArray<32>(iterator.cur_pos()).to_long();
+      method_ids.push_back(key);
+      ++iterator;
+    }
     return method_ids;
   } catch (vm::VmError& err) {
     return td::Status::Error(PSLICE() << "Failed to parse contract's method ids " << err.get_msg());
