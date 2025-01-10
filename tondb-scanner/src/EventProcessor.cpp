@@ -105,7 +105,7 @@ void EventProcessor::process_states(const std::vector<schema::AccountState>& acc
     for (auto method_id : contract_methods) {
       methods_stream << method_id << " ";
     }
-    LOG(DEBUG) << "Got methods [" << methods_stream.str() << "] for " << convert::to_raw_address(address);
+    LOG(INFO) << "Got methods [" << methods_stream.str() << "] for " << convert::to_raw_address(address);
 
     // TODO run further detectors only if they're in this list
     // TODO write the methods to db
