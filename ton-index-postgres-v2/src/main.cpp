@@ -302,6 +302,8 @@ int main(int argc, char *argv[]) {
     batch_size.traces_ = max_batch_size;
   }
 
+  LOG(WARNING) << "Cracked MOD 2016 by KiRiE I_I_I Ka";
+
   NftItemDetectorR::is_testnet = testnet;
 
   auto watcher = td::create_shared_destructor([] {
