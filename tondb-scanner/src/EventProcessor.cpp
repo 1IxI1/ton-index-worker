@@ -92,6 +92,7 @@ void EventProcessor::process_states(const std::vector<schema::AccountState>& acc
 
     // load contract methods from disasm
 
+    LOG(WARNING) << "Processing methods on " << convert::to_raw_address(address);
     std::vector<long long> contract_methods;
     td::Result<std::vector<long long>> contract_methods_result;
     contract_methods_result = parse_contract_methods(code_cell);
@@ -105,7 +106,7 @@ void EventProcessor::process_states(const std::vector<schema::AccountState>& acc
     for (auto method_id : contract_methods) {
       methods_stream << method_id << " ";
     }
-    LOG(INFO) << "Got methods [" << methods_stream.str() << "] for " << convert::to_raw_address(address);
+    LOG(WARNING) << "Got methods [" << methods_stream.str() << "] for " << convert::to_raw_address(address);
 
     // TODO run further detectors only if they're in this list
     // TODO write the methods to db
