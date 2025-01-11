@@ -10,6 +10,7 @@ add_library(tondb-scanner STATIC
     # src/EventProcessor2.cpp
     src/queue_state.cpp
     src/parse_token_data.cpp
+    src/parse_contract_methods.cpp
     src/convert-utils.cpp
     src/tokens.cpp
     src/Statistics.cpp

@@ -1,3 +1,4 @@
+#pragma once
 #include <td/actor/actor.h>
 #include <td/actor/MultiPromise.h>
 #include <block/block.h>
