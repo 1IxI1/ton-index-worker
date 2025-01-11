@@ -56,7 +56,7 @@ td::Result<std::vector<unsigned long long>> parse_contract_methods(td::Ref<vm::C
     auto methods_dict_key_len = cs.fetch_ulong(10);
     auto methods_dict_cell = cs.fetch_ref();
     vm::Dictionary methods_dict{methods_dict_cell, static_cast<int>(methods_dict_key_len)};
-    std::vector<long long> method_ids;
+    std::vector<unsigned long long> method_ids;
     auto iterator = methods_dict.begin();
     while (!iterator.eof()) {
       auto key = td::BitArray<32>(iterator.cur_pos()).to_ulong();
