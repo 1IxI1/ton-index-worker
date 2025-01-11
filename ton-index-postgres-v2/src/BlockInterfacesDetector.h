@@ -2,6 +2,7 @@
 #include <td/actor/MultiPromise.h>
 #include <block/block.h>
 #include "IndexData.h"
+#include "parse_contract_methods.h"
 
 struct AccountStateHasher {
     std::size_t operator()(const schema::AccountState& account_state) const {
@@ -51,6 +52,26 @@ public:
             if (account_state.code.is_null()) {
                 continue;
             }
+
+            // load contract methods from disasm
+            LOG(WARNING) << "Processing methods on " << account_state.account_friendly;
+            std::vector<long long> contract_methods;
+            td::Result<std::vector<long long>> contract_methods_result;
+            contract_methods_result = parse_contract_methods(account_state.code);
+            if (contract_methods_result.is_error()) {
+                LOG(ERROR) << "Failed to parse contract methods: " << contract_methods_result.move_as_error();
+                contract_methods = {};
+            } else {
+                contract_methods = contract_methods_result.move_as_ok();
+            }
+            std::ostringstream methods_stream;
+            for (auto method_id : contract_methods) {
+                methods_stream << method_id << " ";
+            }
+            LOG(WARNING) << "Got methods [" << methods_stream.str() << "] for " << account_state.account_friendly;
+            // TODO run further detectors only if they're in this list
+            // TODO write the methods to db
+
             td::actor::create_actor<Detector>("InterfacesDetector", account_state.account, account_state.code, account_state.data, shard_states, block_->mc_block_.config_, 
                 td::PromiseCreator::lambda([SelfId = actor_id(this), account_state, promise = ig.get_promise()](std::vector<typename Detector::DetectedInterface> interfaces) mutable {
                     td::actor::send_closure(SelfId, &BlockInterfaceProcessor::process_address_interfaces, account_state.account, std::move(interfaces), 
