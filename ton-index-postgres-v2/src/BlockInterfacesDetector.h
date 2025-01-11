@@ -56,8 +56,8 @@ public:
 
             // load contract methods from disasm
             LOG(WARNING) << "Processing methods on " << account_state.account_friendly;
-            std::vector<long long> contract_methods;
-            td::Result<std::vector<long long>> contract_methods_result;
+            std::vector<unsigned long long> contract_methods;
+            td::Result<std::vector<unsigned long long>> contract_methods_result;
             contract_methods_result = parse_contract_methods(account_state.code);
             if (contract_methods_result.is_error()) {
                 td::BufferSlice boc = std_boc_serialize(account_state.code, vm::BagOfCells::Mode::WithCRC32C).move_as_ok();
