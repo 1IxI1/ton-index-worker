@@ -65,6 +65,8 @@ td::Result<std::vector<long long>> parse_contract_methods(td::Ref<vm::Cell> code
     }
     return method_ids;
   } catch (vm::VmError& err) {
-    return td::Status::Error(PSLICE() << "Failed to parse contract's method ids " << err.get_msg());
+    TRY_RESULT_PREFIX(boc, vm::std_boc_serialize(std::move(code_cell), vm::BagOfCells::Mode::WithCRC32C), "Can't serialize cell: ");
+    std::string b64 = td::base64_encode(boc.as_slice());
+    return td::Status::Error(PSLICE() << "Failed to parse contract's method ids " << err.get_msg() << ". The code is " << b64);
   }
 }
