@@ -14,26 +14,6 @@ let code = Cell.fromBoc(
 
 let slice = code.beginParse();
 
-const firstOp = slice.loadBits(8);
-const expectedCodePage = slice.loadUint(8);
-if (firstOp.toString() !== "FF" || expectedCodePage !== 0) {
-    throw Error("No SETCP or not cp = 0");
-}
-
-const op_DICTPUSHCONST_cut_bin = "1111010010100"; // first 13 bits of 'f4a0'
-
-const secondOp = slice.loadUint(13);
-const isPushOp = slice.loadBit();
-const correctOp = secondOp.toString(2) == op_DICTPUSHCONST_cut_bin && isPushOp;
-if (!correctOp) {
-    throw Error("Not DICTPUSHCONST at the 2nd op");
-}
-const dictKeyLen = slice.loadUint(10);
-const dictCell = slice.loadRef();
-
-let dict = Dictionary.loadDirect(Dictionary.Keys.Int(dictKeyLen), Dictionary.Values.Uint(0), dictCell);
-
-const methods = dict.keys();
 console.log("contract methods: ", methods);
 */
 
@@ -43,23 +23,27 @@ td::Result<std::vector<unsigned long long>> parse_contract_methods(td::Ref<vm::C
   // and load method ids from this dict of methods
   try {
     vm::CellSlice cs = vm::load_cell_slice(code_cell);
+
     auto first_op = cs.fetch_ulong(8);
     auto expectedCodePage = cs.fetch_ulong(8);
     if (first_op != 0xFF || expectedCodePage != 0) {
       return td::Status::Error("Failed to parse 1. SETCP or codepage is not 0");
     }
+
     auto second_op = cs.fetch_ulong(13);
     auto is_push_op_flag = cs.fetch_ulong(1);
     if (second_op != 0b1111010010100 || is_push_op_flag != 1) {
       return td::Status::Error("Failed to parse 2. DICTPUSHCONST");
     }
-    auto methods_dict_key_len = cs.fetch_ulong(10);
+
+    auto methods_dict_key_len = static_cast<int>(cs.fetch_ulong(10));
     auto methods_dict_cell = cs.fetch_ref();
-    vm::Dictionary methods_dict{methods_dict_cell, static_cast<int>(methods_dict_key_len)};
+    vm::Dictionary methods_dict{methods_dict_cell, methods_dict_key_len};
     std::vector<unsigned long long> method_ids;
     auto iterator = methods_dict.begin();
     while (!iterator.eof()) {
-      auto key = td::BitArray<32>(iterator.cur_pos()).to_ulong();
+      // load 32 bits from the start of the key and cut `methods_dict_key_len` bits as only needed
+      auto key = td::BitArray<32>(iterator.cur_pos()).to_ulong() >> (32 - methods_dict_key_len);
       method_ids.push_back(key);
       ++iterator;
     }
