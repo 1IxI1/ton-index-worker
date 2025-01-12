@@ -54,14 +54,13 @@ public:
             }
 
             // load contract methods from disasm
-            LOG(WARNING) << "Processing methods on " << account_state.account_friendly;
             std::vector<unsigned long long> contract_methods;
             td::Result<std::vector<unsigned long long>> contract_methods_result;
             contract_methods_result = parse_contract_methods(account_state.code);
             if (contract_methods_result.is_error()) {
                 td::BufferSlice boc = std_boc_serialize(account_state.code, vm::BagOfCells::Mode::WithCRC32C).move_as_ok();
                 std::string b64 = base64_encode(boc.as_slice());
-                LOG(ERROR) << "Failed to parse contract methods: " << contract_methods_result.move_as_error() << " for " << account_state.account_friendly << " code: " << b64;
+                LOG(ERROR) << "Failed to parse contract methods: " << contract_methods_result.move_as_error() << " for " << convert::to_raw_address(account_state.account) << " code: " << b64;
                 contract_methods = {};
             } else {
                 contract_methods = contract_methods_result.move_as_ok();
@@ -70,12 +69,12 @@ public:
             for (auto method_id : contract_methods) {
                 methods_stream << method_id << " ";
             }
-            LOG(WARNING) << "Got methods [" << methods_stream.str() << "] for " << account_state.account_friendly;
+            LOG(INFO) << "Got methods [" << methods_stream.str() << "] for " << convert::to_raw_address(account_state.account);
             // TODO run further detectors only if they're in this list
             // TODO write the methods to db
 
             td::actor::create_actor<Detector>("InterfacesDetector", account_state.account, account_state.code, account_state.data, shard_states, block_->mc_block_.config_, 
-                td::PromiseCreator::lambda([SelfId = actor_id(this), account_state, promise = ig.get_promise()](std::vector<typename Detector::DetectedInterface> interfaces) mutable {
+                td::PromiseCreator::lambda([SelfId = actor_id(this), account_state, promise = ig.get_promise()](std::vector<Detector::DetectedInterface> interfaces) mutable {
                     td::actor::send_closure(SelfId, &BlockInterfaceProcessor::process_address_interfaces, account_state.account, std::move(interfaces), 
                                             account_state.code_hash.value(), account_state.data_hash.value(), account_state.last_trans_lt, account_state.timestamp, std::move(promise));
             })).release();
