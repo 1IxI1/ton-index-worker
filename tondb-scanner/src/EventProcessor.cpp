@@ -87,6 +87,7 @@ void EventProcessor::process_states(const std::vector<schema::AccountState>& acc
     }
     auto last_tx_lt = account_state.last_trans_lt;
     auto last_tx_now = account_state.timestamp;
+
     auto P1 = td::PromiseCreator::lambda([this, code_cell, address, found_interfaces, promise = ig.get_promise()](td::Result<JettonMasterData> master_data) mutable {
       if (master_data.is_ok()) {
         LOG(DEBUG) << "Detected interface JETTON_MASTER for " << convert::to_raw_address(address);

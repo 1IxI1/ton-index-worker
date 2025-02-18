@@ -10,6 +10,7 @@ add_library(tondb-scanner STATIC
     # src/EventProcessor2.cpp
     src/queue_state.cpp
     src/parse_token_data.cpp
+    src/parse_contract_methods.cpp
     src/convert-utils.cpp
     src/tokens-tlb.cpp
     src/Statistics.cpp
@@ -20,6 +21,7 @@ add_library(tondb-scanner STATIC
 
 target_include_directories(tondb-scanner 
     PUBLIC src/
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/ton/crypto/src
 )
 
 target_compile_features(tondb-scanner PRIVATE cxx_std_20)

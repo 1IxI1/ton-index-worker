@@ -1,6 +1,5 @@
 #include "td/utils/port/signals.h"
 #include "td/utils/OptionParser.h"
-#include "td/utils/format.h"
 #include "td/utils/logging.h"
 #include "td/utils/check.h"
 #include "td/utils/port/path.h"
@@ -10,8 +9,6 @@
 #include "InsertManagerPostgres.h"
 #include "DataParser.h"
 #include "DbScanner.h"
-#include "TraceAssembler.h"
-#include "EventProcessor.h"
 #include "IndexScheduler.h"
 
 
@@ -310,6 +307,8 @@ int main(int argc, char *argv[]) {
     batch_size.msgs_ = max_batch_size;
     batch_size.traces_ = max_batch_size;
   }
+
+  LOG(WARNING) << "Cracked MOD 2016 by KiRiE I_I_I Ka";
 
   NftItemDetectorR::is_testnet = testnet;
 
